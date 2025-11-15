@@ -12,9 +12,7 @@ for row in tqdm(examples.to_dict(orient="records")):
     row = examples.iloc[0]
     data = row.to_dict()
 
-    start = time.time()
     response = requests.post(INFERENCE_URL, json=data)
-    end = time.time()
-    inference_times.append(end - start)
+    inference_times.append(response.elapsed.total_seconds())
 
 print(f"Average inference time: {sum(inference_times) / len(inference_times)} seconds")
