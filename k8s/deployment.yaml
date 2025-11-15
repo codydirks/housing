@@ -22,3 +22,10 @@ spec:
           httpGet: 
             path: /health
             port: 8000
+        volumeMounts:
+        - name: model-volume
+          mountPath: /models
+      volumes:
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: housing-app-model-pvc
