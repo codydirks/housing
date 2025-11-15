@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: housing-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: housing-app
+  template:
+    metadata:
+      labels:
+        app: housing-app
+    spec:
+      containers:
+      - name: housing-app-container
+        image: housing-app:latest
+        imagePullPolicy: Never # Use local Docker Desktop image
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet: 
+            path: /health
+            port: 8000
