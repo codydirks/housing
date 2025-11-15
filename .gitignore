@@ -2,3 +2,5 @@ model/*
 *.pyc
 
 src/housing.egg-info/
+
+*.ipynb
