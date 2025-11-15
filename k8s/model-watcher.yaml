@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-watcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-watcher
+  template:
+    metadata:
+      labels:
+        app: model-watcher
+    spec:
+      containers:
+      - name: model-watcher
+        image: model-watcher:latest
+        imagePullPolicy: Never # Use local Docker Desktop image
+        volumeMounts:
+        - name: model-volume
+          mountPath: /models
+      volumes:
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: housing-app-model-pvc
