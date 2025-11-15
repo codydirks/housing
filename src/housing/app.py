@@ -1,22 +1,21 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 
-from housing.api import InferenceRequest, InferenceWrapper, InferenceResponse
+from housing.api import InferenceRequest, InferenceResponse, InferenceWrapper, HealthCheckResponse
 
 app = FastAPI()
 
 INFERER = InferenceWrapper()
 
 @app.get("/health")
-def health():
+def health() -> HealthCheckResponse:
 
     status = (
         "healthy"
         if INFERER is not None and INFERER._health_check()
         else "unhealthy"
     )
-    return {"status": status}
+    return HealthCheckResponse(status=status)
 
 @app.post('/model/inference')
-def inference(request: InferenceRequest):
+def inference(request: InferenceRequest) -> InferenceResponse:
     return INFERER.inference(request)

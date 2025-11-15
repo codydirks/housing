@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 import pickle
@@ -27,8 +28,11 @@ class InferenceRequest(BaseModel):
     sqft_living15: int
     sqft_lot15: int
 
+class HealthCheckResponse(BaseModel):
+    status: str
+
 class InferenceResponse(BaseModel):
-    price: float
+    price: Optional[float] = None
 
 class InferenceWrapper:
     def __init__(self):
