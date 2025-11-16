@@ -3,11 +3,13 @@ from pydantic import BaseModel
 from abc import ABC, abstractmethod
 
 import pickle
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from housing.config import INFERENCE_COLUMNS, MODEL_PATH, DEMOGRAPHICS_PATH
+from housing.config import INFERENCE_COLUMNS, PRODUCTION_MODEL_PATH, DEV_MODEL_PATH, DEMOGRAPHICS_PATH
 
 
 class FullInferenceRequest(BaseModel):
@@ -51,6 +53,8 @@ class InferenceResponse(BaseModel):
 
 
 class InferenceWrapper(ABC):
+    model_path: Path
+
     def __init__(self):
         self.model = self.load_model()
         self.demographics = self.load_demographic_data()
@@ -59,7 +63,7 @@ class InferenceWrapper(ABC):
         return self.model is not None and self.demographics is not None
 
     def load_model(self) -> Pipeline:
-        with open(MODEL_PATH, "rb") as f:
+        with open(self.model_path, "rb") as f:
             self.model = pickle.load(f)
 
         return self.model
@@ -82,7 +86,9 @@ class InferenceWrapper(ABC):
         return InferenceResponse(price=prediction[0])
 
 
-class FullInferenceWrapper(InferenceWrapper):
+class ProductionInferenceWrapper(InferenceWrapper):
+    model_path = PRODUCTION_MODEL_PATH
+
     def form_input_from_request(self, input: Union[FullInferenceRequest, SimpleInferenceRequest]) -> pd.DataFrame:
         assert isinstance(input, FullInferenceRequest)
         data_dict = input.model_dump()
@@ -90,9 +96,13 @@ class FullInferenceWrapper(InferenceWrapper):
         return sample
 
 
-class SimpleInferenceWrapper(InferenceWrapper):
+class SimpleInferenceWrapper(ProductionInferenceWrapper):
     def form_input_from_request(self, input: Union[FullInferenceRequest, SimpleInferenceRequest]) -> pd.DataFrame:
         assert isinstance(input, SimpleInferenceRequest)
         data_dict = input.model_dump()
         sample = pd.DataFrame([data_dict])
         return sample
+
+
+class DevInferenceWrapper(ProductionInferenceWrapper):
+    model_path = DEV_MODEL_PATH

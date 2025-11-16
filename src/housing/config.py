@@ -6,7 +6,8 @@ SALES_PATH = DATA_DIR / "kc_house_data.csv"
 DEMOGRAPHICS_PATH = DATA_DIR / "zipcode_demographics.csv"
 
 MODEL_DIR = PROJECT_DIR / "model"
-MODEL_PATH = MODEL_DIR / "model.pkl"
+PRODUCTION_MODEL_PATH = MODEL_DIR / "production_model.pkl"
+DEV_MODEL_PATH = MODEL_DIR / "dev_model.pkl"
 
 INFERENCE_COLUMNS = [
     "bedrooms",
