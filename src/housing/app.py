@@ -6,13 +6,14 @@ from housing.api import (
     InferenceResponse,
     FullInferenceWrapper,
     SimpleInferenceWrapper,
-    HealthCheckResponse
+    HealthCheckResponse,
 )
 
 app = FastAPI()
 
 FULL_INFERER = FullInferenceWrapper()
 SIMPLE_INFERER = SimpleInferenceWrapper()
+
 
 @app.get("/health")
 def health() -> HealthCheckResponse:
@@ -29,10 +30,12 @@ def health() -> HealthCheckResponse:
     )
     return HealthCheckResponse(status=status)
 
-@app.post('/inference/full')
+
+@app.post("/inference/full")
 def inference(request: FullInferenceRequest) -> InferenceResponse:
     return FULL_INFERER.inference(request)
 
-@app.post('/inference/simple')
+
+@app.post("/inference/simple")
 def simple_inference(request: SimpleInferenceRequest) -> InferenceResponse:
     return SIMPLE_INFERER.inference(request)

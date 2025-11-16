@@ -9,12 +9,12 @@ MODEL_DIR = PROJECT_DIR / "model"
 MODEL_PATH = MODEL_DIR / "model.pkl"
 
 INFERENCE_COLUMNS = [
-    'bedrooms',
-    'bathrooms',
-    'sqft_living',
-    'sqft_lot',
-    'floors',
-    'sqft_above',
-    'sqft_basement',
-    'zipcode'
+    "bedrooms",
+    "bathrooms",
+    "sqft_living",
+    "sqft_lot",
+    "floors",
+    "sqft_above",
+    "sqft_basement",
+    "zipcode",
 ]
