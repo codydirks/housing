@@ -21,9 +21,6 @@ dependencies = [
     "kubernetes"
 ]
 
-[project.scripts]
-run-housing-app = "housing.app:main"
-
 [tools.setuptools]
 package-dir = {"" = "src"}
 
