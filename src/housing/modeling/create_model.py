@@ -1,5 +1,5 @@
 import json
-import pathlib
+from pathlib import Path
 import pickle
 from typing import List
 from typing import Tuple
@@ -10,18 +10,15 @@ from sklearn import neighbors
 from sklearn import pipeline
 from sklearn import preprocessing
 
-SALES_PATH = "data/kc_house_data.csv"  # path to CSV with home sale data
-DEMOGRAPHICS_PATH = "data/kc_house_data.csv"  # path to CSV with demographics
+from housing.config import MODEL_DIR, SALES_PATH, DEMOGRAPHICS_PATH, INFERENCE_COLUMNS
+
+
 # List of columns (subset) that will be taken from home sale data
-SALES_COLUMN_SELECTION = [
-    'price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot', 'floors',
-    'sqft_above', 'sqft_basement', 'zipcode'
-]
-OUTPUT_DIR = "model"  # Directory where output artifacts will be saved
+SALES_COLUMN_SELECTION = ['price'] + INFERENCE_COLUMNS
 
 
 def load_data(
-    sales_path: str, demographics_path: str, sales_column_selection: List[str]
+    sales_path: Path, demographics_path: Path, sales_column_selection: List[str]
 ) -> Tuple[pandas.DataFrame, pandas.Series]:
     """Load the target and feature data by merging sales and demographics.
 
@@ -40,7 +37,7 @@ def load_data(
     data = pandas.read_csv(sales_path,
                            usecols=sales_column_selection,
                            dtype={'zipcode': str})
-    demographics = pandas.read_csv("data/zipcode_demographics.csv",
+    demographics = pandas.read_csv(demographics_path,
                                    dtype={'zipcode': str})
 
     merged_data = data.merge(demographics, how="left",
@@ -62,7 +59,7 @@ def main():
                                    neighbors.KNeighborsRegressor()).fit(
                                        x_train, y_train)
 
-    output_dir = pathlib.Path(OUTPUT_DIR)
+    output_dir = MODEL_DIR
     output_dir.mkdir(exist_ok=True)
 
     # Output model artifacts: pickled model and JSON list of features
