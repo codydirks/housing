@@ -10,11 +10,11 @@ from sklearn import ensemble
 from sklearn import pipeline
 from sklearn import preprocessing
 
-from housing.config import MODEL_DIR, SALES_PATH, DEMOGRAPHICS_PATH, INFERENCE_COLUMNS
+from housing.config import MODEL_DIR, SALES_PATH, DEMOGRAPHICS_PATH, DEV_INFERENCE_COLUMNS
 
 
 # List of columns (subset) that will be taken from home sale data
-SALES_COLUMN_SELECTION = ["price"] + INFERENCE_COLUMNS
+SALES_COLUMN_SELECTION = ["price"] + DEV_INFERENCE_COLUMNS
 
 
 def load_data(
