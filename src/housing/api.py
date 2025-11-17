@@ -1,6 +1,5 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 from pydantic import BaseModel
-from abc import ABC, abstractmethod
 
 import pickle
 from pathlib import Path
@@ -9,7 +8,13 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from housing.config import INFERENCE_COLUMNS, PRODUCTION_MODEL_PATH, DEV_MODEL_PATH, DEMOGRAPHICS_PATH
+from housing.config import (
+    PRODUCTION_INFERENCE_COLUMNS,
+    DEV_INFERENCE_COLUMNS,
+    PRODUCTION_MODEL_PATH,
+    DEV_MODEL_PATH,
+    DEMOGRAPHICS_PATH,
+)
 
 
 class FullInferenceRequest(BaseModel):
@@ -52,8 +57,9 @@ class InferenceResponse(BaseModel):
     price: Optional[float] = None
 
 
-class InferenceWrapper(ABC):
+class InferenceWrapper:
     model_path: Path
+    inference_columns: List[str]
 
     def __init__(self):
         self.model = self.load_model()
@@ -72,9 +78,11 @@ class InferenceWrapper(ABC):
         demographics = pd.read_csv(DEMOGRAPHICS_PATH, dtype={"zipcode": str})
         return demographics
 
-    @abstractmethod
     def form_input_from_request(self, input: Union[FullInferenceRequest, SimpleInferenceRequest]) -> pd.DataFrame:
-        pass
+        assert isinstance(input, FullInferenceRequest)
+        data_dict = input.model_dump()
+        sample = pd.DataFrame([data_dict])[self.inference_columns]
+        return sample
 
     def inference(self, input_data: Union[FullInferenceRequest, SimpleInferenceRequest]) -> InferenceResponse:
         sample = self.form_input_from_request(input_data)
@@ -88,21 +96,15 @@ class InferenceWrapper(ABC):
 
 class ProductionInferenceWrapper(InferenceWrapper):
     model_path = PRODUCTION_MODEL_PATH
+    inference_columns = PRODUCTION_INFERENCE_COLUMNS
 
     def form_input_from_request(self, input: Union[FullInferenceRequest, SimpleInferenceRequest]) -> pd.DataFrame:
         assert isinstance(input, FullInferenceRequest)
         data_dict = input.model_dump()
-        sample = pd.DataFrame([data_dict])[INFERENCE_COLUMNS]
-        return sample
-
-
-class SimpleInferenceWrapper(ProductionInferenceWrapper):
-    def form_input_from_request(self, input: Union[FullInferenceRequest, SimpleInferenceRequest]) -> pd.DataFrame:
-        assert isinstance(input, SimpleInferenceRequest)
-        data_dict = input.model_dump()
-        sample = pd.DataFrame([data_dict])
+        sample = pd.DataFrame([data_dict])[self.inference_columns]
         return sample
 
 
 class DevInferenceWrapper(ProductionInferenceWrapper):
     model_path = DEV_MODEL_PATH
+    inference_columns = DEV_INFERENCE_COLUMNS

@@ -9,7 +9,7 @@ MODEL_DIR = PROJECT_DIR / "model"
 PRODUCTION_MODEL_PATH = MODEL_DIR / "production_model.pkl"
 DEV_MODEL_PATH = MODEL_DIR / "dev_model.pkl"
 
-INFERENCE_COLUMNS = [
+PRODUCTION_INFERENCE_COLUMNS = [
     "bedrooms",
     "bathrooms",
     "sqft_living",
@@ -18,4 +18,25 @@ INFERENCE_COLUMNS = [
     "sqft_above",
     "sqft_basement",
     "zipcode",
+]
+
+DEV_INFERENCE_COLUMNS = [
+    "bedrooms",
+    "bathrooms",
+    "sqft_living",
+    "sqft_lot",
+    "floors",
+    "waterfront",
+    "view",
+    "condition",
+    "grade",
+    "sqft_above",
+    "sqft_basement",
+    "yr_built",
+    "yr_renovated",
+    "zipcode",
+    "lat",
+    "long",
+    "sqft_living15",
+    "sqft_lot15",
 ]
