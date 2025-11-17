@@ -7,7 +7,7 @@ import pandas as pd
 HOST = "http://localhost:8000"
 
 PRODUCTION_INFERENCE_URL = f"{HOST}/inference/production/full"
-DEV_INFERENCE_URL = f"{HOST}/inference/dev/full"
+DEV_INFERENCE_URL = f"{HOST}/inference/dev"
 
 
 def print_results(inference_times: List[float], label: str):
