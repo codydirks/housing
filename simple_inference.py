@@ -19,6 +19,7 @@ def test_endpoint(url: str, examples: pd.DataFrame):
     inference_times = []
     for row in tqdm(examples.to_dict(orient="records")):
         response = requests.post(url, json=row)
+        assert response.status_code == 200, f"Request failed with status code {response.status_code}"
         inference_times.append(response.elapsed.total_seconds())
 
     label = "production" if "production" in url else "dev"
