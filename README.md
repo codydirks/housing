@@ -1,3 +1,52 @@
+# Environment
+Create a Conda environment in one of the following ways:
+- Using the existing `conda_environment.yml`:
+  ```
+  conda env create -f conda_environment.yml
+  ```
+- Manually creating your own:
+  ```
+  conda create python==3.9 -n housing
+  ```
+
+# Installation
+1. Use `pip` to install this package and any additional dependencies:
+   ```
+   cd /path/to/this/directory
+
+   pip install -e .
+   ```
+2. Install Docker on your system. This is most easily done by downloading and installing the [Docker Desktop](https://www.docker.com/products/docker-desktop/) software package.
+3. Install `kubectl` on your system. This is most easily done by enabling Kubernetes (specifically, Kubeadm) within Docker Desktop by following [these steps](https://docs.docker.com/desktop/use-desktop/kubernetes/).
+
+# Deployment
+This package uses Docker and Kubernetes (specifically, `kubectl`) to deploy a model inference API built using `fastapi`. This package can be built and deployed using the `local_deploy.sh` script in the top-level directory of this project:
+```
+sh local_deploy.sh
+```
+
+This script does the following:
+- Removes any pre-existing Kubernetes deployments associated with this repository using `kubectl delete`.
+- Rebuilds the appropriate Docker images with `docker build`.
+- (Re-)Deploys the Kubernetes deployment using `kubectl apply`.
+- Waits for deployment to complete, and does a health check that the API is responding as expected.
+
+This Kubernetes deployment has a few key pieces:
+- `deployment.yaml`: The main API deployment. References the `housing-app` image created by the `Dockerfile`. Currently set to only create 1 replica, but this could be scaled up if necessary.
+- `service.yaml`: A `LoadBalancer` service that handles balancing incoming requests between the replicas of the hosing app deployment.
+- `model-watcher.yaml`: Defines a separate deployment which monitors for model updates and performs a rolling restart of the main deployment. This deployment references the `model-watcher` image created by the `model-watcher.Dockerfile`.
+- `model-pvc.yaml`: Defines a `PersistentVolumeClaim` where the model object is stored, so that it can be shared between the main deployment and the model watcher deployment.
+- `role.yaml` and `role-binding.yaml`: Defines access roles that allow the model watcher deployment to restart the main deployment.
+
+# API Description
+This API contains 4 endpoints which are defined in `src/housing/app.py`:
+- `/health`: Checks that the various models are available for inference. Returns `healthy` if so, returns `unhealthy` otherwise.
+- `/inference/production/full`: The primary production endpoint. Accepts all available feature columns for a potential house sale as input in a POST request, and returns a response containing the predicted `price` of the house.
+- `/inference/production/simple`: A separate endpoint to query the production endpoint using a reduced set of columns.
+- `/inference/dev`: Queries a separate development model.
+
+# Pre-existing README
+
 ![phData Logo](phData.png "phData Logo")
 
 # phData Machine Learning Engineer Candidate Project
