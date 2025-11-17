@@ -65,9 +65,9 @@ class InferenceResponse(BaseModel):
     price: Optional[float] = None
 
 
-class InferenceWrapper:
+class InferenceHandler:
     """
-    Base class for inference wrappers. This class handles initial model loading,
+    Base class for inference handlers. This class handles initial model loading,
     preprocessing of the input data, and generating a prediction from the specified model.
 
     Subclasses should specify model_path and inference_columns.
@@ -111,15 +111,15 @@ class InferenceWrapper:
         return InferenceResponse(price=prediction[0])
 
 
-class ProductionInferenceWrapper(InferenceWrapper):
-    """Inference wrapper for the production model."""
+class ProductionInferenceHandler(InferenceHandler):
+    """Inference handler for the production model."""
 
     model_path = PRODUCTION_MODEL_PATH
     inference_columns = PRODUCTION_INFERENCE_COLUMNS
 
 
-class DevInferenceWrapper(ProductionInferenceWrapper):
-    """Inference wrapper for the development model."""
+class DevInferenceHandler(ProductionInferenceHandler):
+    """Inference handler for the development model."""
 
     model_path = DEV_MODEL_PATH
     inference_columns = DEV_INFERENCE_COLUMNS

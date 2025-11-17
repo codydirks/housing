@@ -4,21 +4,21 @@ from housing.api import (
     FullInferenceRequest,
     SimpleInferenceRequest,
     InferenceResponse,
-    ProductionInferenceWrapper,
-    DevInferenceWrapper,
+    ProductionInferenceHandler,
+    DevInferenceHandler,
     HealthCheckResponse,
 )
 
 app = FastAPI()
 
-FULL_INFERER = ProductionInferenceWrapper()
+FULL_INFERER = ProductionInferenceHandler()
 
-# Since this wrapper explicitly selects the necessary columns for inference,
+# Since this handler explicitly selects the necessary columns for inference,
 # there's functionally no difference between "full" and "simple" inference here.
 # However, we keep them separate to allow for future modifications.
-SIMPLE_INFERER = ProductionInferenceWrapper()
+SIMPLE_INFERER = ProductionInferenceHandler()
 
-DEV_INFERER = DevInferenceWrapper()
+DEV_INFERER = DevInferenceHandler()
 
 
 @app.get("/health")
