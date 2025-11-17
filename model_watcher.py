@@ -2,11 +2,13 @@ import hashlib
 import time
 from kubernetes import client, config
 
-MODEL_PATH = "/models/model.pkl"  # Use a shared volume path
+MODEL_PATH = "/models/production_model.pkl"  # Use a shared volume path
+
 
 def get_checksum(path):
     with open(path, "rb") as f:
         return hashlib.md5(f.read()).hexdigest()
+
 
 def restart_deployment():
     config.load_incluster_config()
@@ -16,17 +18,10 @@ def restart_deployment():
         name="housing-app-deployment",
         namespace="default",
         body={
-            "spec": {
-                "template": {
-                    "metadata": {
-                        "annotations": {
-                            "kubectl.kubernetes.io/restartedAt": str(time.time())
-                        }
-                    }
-                }
-            }
-        }
+            "spec": {"template": {"metadata": {"annotations": {"kubectl.kubernetes.io/restartedAt": str(time.time())}}}}
+        },
     )
+
 
 def main():
     last_checksum = get_checksum(MODEL_PATH)
@@ -36,6 +31,7 @@ def main():
         if current_checksum != last_checksum:
             restart_deployment()
             last_checksum = current_checksum
+
 
 if __name__ == "__main__":
     main()
