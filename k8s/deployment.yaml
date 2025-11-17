@@ -12,6 +12,14 @@ spec:
       labels:
         app: housing-app
     spec:
+      initContainers:
+      - name: copy-model
+        image: housing-app:latest
+        imagePullPolicy: Never # Use local Docker Desktop image
+        command: ["cp", "-r", "/app/model/.", "/models-pvc/"]
+        volumeMounts:
+        - name: model-volume
+          mountPath: /models-pvc
       containers:
       - name: housing-app-container
         image: housing-app:latest
