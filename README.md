@@ -1,5 +1,10 @@
-# Environment
-Create a Conda environment in one of the following ways:
+# Introduction
+This repository defines a model inference API that can be deployed locally using Docker and Kubernetes. More details are below, but in quick summary:
+- Once the environment is properly configured, the API can be deployed using the `local_deploy.sh` script.
+- Once the API deployment is running on the local machine, it can be tested with the `simple_inference.py` script.
+
+# (Optional) Python Environment
+While not necessary for deployment, you can create a Conda environment to enable interacting with this Python code in one of the following ways:
 - Using the existing `conda_environment.yml`:
   ```
   conda env create -f conda_environment.yml
@@ -10,14 +15,14 @@ Create a Conda environment in one of the following ways:
   ```
 
 # Installation
-1. Use `pip` to install this package and any additional dependencies:
+1. Install Docker on your system. This is most easily done by downloading and installing the [Docker Desktop](https://www.docker.com/products/docker-desktop/) software package.
+2. Install `kubectl` on your system. This is most easily done by enabling Kubernetes (specifically, Kubeadm) within Docker Desktop by following [these steps](https://docs.docker.com/desktop/use-desktop/kubernetes/).
+3. (Optional) If doing further development, use `pip` to install this package and any additional dependencies:
    ```
    cd /path/to/this/directory
 
    pip install -e .
    ```
-2. Install Docker on your system. This is most easily done by downloading and installing the [Docker Desktop](https://www.docker.com/products/docker-desktop/) software package.
-3. Install `kubectl` on your system. This is most easily done by enabling Kubernetes (specifically, Kubeadm) within Docker Desktop by following [these steps](https://docs.docker.com/desktop/use-desktop/kubernetes/).
 
 # Deployment
 This package uses Docker and Kubernetes (specifically, `kubectl`) to deploy a model inference API built using `fastapi`. This package can be built and deployed using the `local_deploy.sh` script in the top-level directory of this project:
